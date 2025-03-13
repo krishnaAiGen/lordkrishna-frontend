@@ -1,0 +1,175 @@
+<!doctype html>
+<html class="no-js" lang="zxx">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>Welcome - LordKrishna Consultancy</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
+
+        <!-- CSS here -->
+        <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+        <link rel="stylesheet" href="assets/css/owl.carousel.min.css">
+        <link rel="stylesheet" href="assets/css/slicknav.css">
+        <link rel="stylesheet" href="assets/css/animate.min.css">
+        <link rel="stylesheet" href="assets/css/magnific-popup.css">
+        <link rel="stylesheet" href="assets/css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="assets/css/themify-icons.css">
+        <link rel="stylesheet" href="assets/css/slick.css">
+        <link rel="stylesheet" href="assets/css/nice-select.css">
+        <link rel="stylesheet" href="assets/css/style.css">
+        
+        <style>
+            .welcome-container {
+                max-width: 1200px;
+                margin: 50px auto;
+                padding: 20px;
+                text-align: center;
+            }
+            .welcome-card {
+                background: #fff;
+                border-radius: 10px;
+                padding: 40px;
+                margin-bottom: 30px;
+                box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            }
+            .welcome-title {
+                color: #333;
+                font-size: 2.5em;
+                margin-bottom: 30px;
+            }
+            .welcome-subtitle {
+                color: #666;
+                font-size: 1.2em;
+                margin-bottom: 40px;
+            }
+            .menu-card {
+                background: #f8f9fa;
+                border-radius: 8px;
+                padding: 20px;
+                margin: 15px;
+                transition: 0.3s;
+                cursor: pointer;
+                text-decoration: none;
+                color: #333;
+                display: inline-block;
+                width: 300px;
+            }
+            .menu-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+                text-decoration: none;
+                color: #ff5c97;
+            }
+            .menu-icon {
+                font-size: 2em;
+                margin-bottom: 15px;
+                color: #ff5c97;
+            }
+            .menu-title {
+                font-size: 1.2em;
+                font-weight: 600;
+                margin-bottom: 10px;
+            }
+            .menu-description {
+                color: #666;
+                font-size: 0.9em;
+            }
+            .logout-btn {
+                position: absolute;
+                top: 20px;
+                right: 20px;
+                padding: 10px 20px;
+                background: #ff5c97;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                text-decoration: none;
+            }
+            .logout-btn:hover {
+                background: #ff3c7f;
+                color: white;
+            }
+        </style>
+    </head>
+
+    <body>
+        <!-- Header Start -->
+        <header>
+            <div class="header-area header-transparent">
+                <div class="main-header header-sticky">
+                    <div class="container-fluid">
+                        <div class="row align-items-center">
+                            <div class="col-xl-2 col-lg-2 col-md-1">
+                                <div class="logo">
+                                    <a href="index.html" class="big-logo"><img src="assets/img/logo/logo.png" alt=""></a>
+                                </div>
+                            </div>
+                            <div class="col-xl-10 col-lg-10 col-md-10">
+                                <a href="login.html" class="logout-btn">Logout</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- Header End -->
+
+        <main>
+            <div class="welcome-container">
+                <div class="welcome-card">
+                    <h1 class="welcome-title">Welcome to LordKrishna Software System</h1>
+                    <p class="welcome-subtitle">Please select one of the following options to proceed</p>
+                    
+                    <div class="row justify-content-center">
+                        <div class="col-md-6">
+                            <a href="dashboard.html" class="menu-card">
+                                <div class="menu-icon">
+                                    <i class="fas fa-file-alt"></i>
+                                </div>
+                                <div class="menu-title">Submit Field Report</div>
+                                <div class="menu-description">Create and submit a new field report with detailed information</div>
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <a href="dashboard.html#view" class="menu-card">
+                                <div class="menu-icon">
+                                    <i class="fas fa-list-alt"></i>
+                                </div>
+                                <div class="menu-title">View Reports</div>
+                                <div class="menu-description">Access and review all submitted field reports</div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- JS here -->
+        <script src="./assets/js/vendor/modernizr-3.5.0.min.js"></script>
+        <script src="./assets/js/vendor/jquery-1.12.4.min.js"></script>
+        <script src="./assets/js/popper.min.js"></script>
+        <script src="./assets/js/bootstrap.min.js"></script>
+        <script src="./assets/js/jquery.slicknav.min.js"></script>
+        <script src="./assets/js/owl.carousel.min.js"></script>
+        <script src="./assets/js/slick.min.js"></script>
+        <script src="./assets/js/wow.min.js"></script>
+        <script src="./assets/js/animated.headline.js"></script>
+        <script src="./assets/js/jquery.magnific-popup.js"></script>
+        <script src="./assets/js/jquery.nice-select.min.js"></script>
+        <script src="./assets/js/jquery.sticky.js"></script>
+        <script src="./assets/js/main.js"></script>
+
+        <script>
+            // Check for authentication
+            document.addEventListener('DOMContentLoaded', function() {
+                const username = localStorage.getItem('username');
+                if (!username) {
+                    window.location.href = 'login.html';
+                }
+            });
+        </script>
+    </body>
+</html> 
