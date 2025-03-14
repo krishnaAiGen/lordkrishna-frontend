@@ -298,8 +298,8 @@
                                         
                                     </div>
                                 </div>
-                            </div>
-                        </div> -->
+                            </div> -->
+                        </div>
                         <!-- Copy-Right -->
                         <div class="row align-items-center">
                             <div class="col-xl-12 ">
@@ -362,5 +362,113 @@
         <script src="./assets/js/plugins.js"></script>
         <script src="./assets/js/main.js"></script>
         
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Function to handle mobile view adjustments
+                function handleMobileView() {
+                    const isMobile = window.innerWidth < 992;
+                    
+                    // 1. Handle mobile login button
+                    function setupMobileLoginButton() {
+                        // Check if mobile login button already exists
+                        let mobileLoginBtn = document.querySelector('.mobile-login-btn');
+                        
+                        // If we're on mobile and the button doesn't exist, create it
+                        if (!mobileLoginBtn && isMobile) {
+                            mobileLoginBtn = document.createElement('a');
+                            mobileLoginBtn.href = 'login.html';
+                            mobileLoginBtn.className = 'mobile-login-btn btn';
+                            mobileLoginBtn.style.display = 'block';
+                            mobileLoginBtn.style.margin = '10px 15px';
+                            mobileLoginBtn.style.textAlign = 'center';
+                            mobileLoginBtn.style.backgroundColor = '#ff5c97';
+                            mobileLoginBtn.style.color = '#fff';
+                            mobileLoginBtn.style.borderRadius = '5px';
+                            mobileLoginBtn.style.padding = '10px 20px';
+                            mobileLoginBtn.style.fontWeight = 'bold';
+                            mobileLoginBtn.textContent = 'Login';
+                            
+                            // Insert after mobile menu
+                            const mobileMenu = document.querySelector('.mobile_menu');
+                            if (mobileMenu) {
+                                mobileMenu.parentNode.insertBefore(mobileLoginBtn, mobileMenu.nextSibling);
+                            }
+                        }
+                        
+                        // Show/hide mobile login button based on screen size
+                        if (mobileLoginBtn) {
+                            mobileLoginBtn.style.display = isMobile ? 'block' : 'none';
+                        }
+                    }
+                    
+                    // 2. Fix incorrect links
+                    function fixIncorrectLinks() {
+                        const links = document.querySelectorAll('a');
+                        links.forEach(link => {
+                            if (link.href.includes('supervision.htmlaa')) {
+                                link.href = link.href.replace('supervision.htmlaa', 'supervision.html');
+                            }
+                            if (link.href.includes('valuation.htmlaa')) {
+                                link.href = link.href.replace('valuation.htmlaa', 'valuation.html');
+                            }
+                            if (link.href.includes('training.htmlaa')) {
+                                link.href = link.href.replace('training.htmlaa', 'training.html');
+                            }
+                        });
+                    }
+                    
+                    // 3. Handle mobile menu items (blog and service details)
+                    function handleMobileMenuItems() {
+                        if (isMobile) {
+                            // Wait a bit for SlickNav to initialize
+                            setTimeout(() => {
+                                // Hide blog menu item in mobile view
+                                const slicknavItems = document.querySelectorAll('.slicknav_nav > li');
+                                slicknavItems.forEach(item => {
+                                    const itemText = item.textContent.trim();
+                                    // Hide blog items
+                                    if (itemText.includes('Blog')) {
+                                        item.style.display = 'none';
+                                    }
+                                    
+                                    // Hide service details submenu items if they exist
+                                    const serviceDetailsLinks = item.querySelectorAll('a');
+                                    serviceDetailsLinks.forEach(link => {
+                                        if (link.href.includes('services_details.html') || 
+                                            link.textContent.includes('Services Details')) {
+                                            link.parentElement.style.display = 'none';
+                                        }
+                                    });
+                                });
+                                
+                                // Ensure mobile menu has proper height and scrolling
+                                const mobileNav = document.querySelector('.slicknav_nav');
+                                if (mobileNav) {
+                                    mobileNav.style.maxHeight = '70vh';
+                                    mobileNav.style.overflowY = 'auto';
+                                }
+                            }, 300);
+                        }
+                    }
+                    
+                    // Run all mobile view adjustments
+                    setupMobileLoginButton();
+                    fixIncorrectLinks();
+                    handleMobileMenuItems();
+                }
+                
+                // Run on page load
+                handleMobileView();
+                
+                // Run on window resize
+                window.addEventListener('resize', handleMobileView);
+                
+                // Run after a delay to ensure SlickNav has initialized
+                setTimeout(handleMobileView, 500);
+                
+                // Run again after 1 second to catch any late DOM changes
+                setTimeout(handleMobileView, 1000);
+            });
+        </script>
     </body>
 </html>
