@@ -328,5 +328,88 @@
         <script src="./assets/js/plugins.js"></script>
         <script src="./assets/js/main.js"></script>
 
+        <script>
+            // Custom JavaScript to fix mobile view issues
+            document.addEventListener('DOMContentLoaded', function() {
+                // Function to handle mobile view adjustments
+                function handleMobileView() {
+                    const isMobile = window.innerWidth < 992;
+                    
+                    // 1. Handle login button visibility on mobile
+                    const loginBtn = document.querySelector('.header-right-btn a.btn');
+                    if (loginBtn) {
+                        // Create mobile login button if it doesn't exist
+                        let mobileLoginBtn = document.querySelector('.mobile-login-btn');
+                        if (!mobileLoginBtn && isMobile) {
+                            mobileLoginBtn = document.createElement('a');
+                            mobileLoginBtn.href = 'login.html';
+                            mobileLoginBtn.className = 'mobile-login-btn btn';
+                            mobileLoginBtn.style.display = 'block';
+                            mobileLoginBtn.style.margin = '10px 15px';
+                            mobileLoginBtn.style.textAlign = 'center';
+                            mobileLoginBtn.textContent = 'Login';
+                            
+                            // Insert after mobile menu
+                            const mobileMenu = document.querySelector('.mobile_menu');
+                            if (mobileMenu && mobileMenu.parentNode) {
+                                mobileMenu.parentNode.insertBefore(mobileLoginBtn, mobileMenu.nextSibling);
+                            }
+                        }
+                        
+                        // Show/hide mobile login button based on screen size
+                        if (mobileLoginBtn) {
+                            mobileLoginBtn.style.display = isMobile ? 'block' : 'none';
+                        }
+                    }
+                    
+                    // 2. Hide blog elements and service details in mobile view
+                    if (isMobile) {
+                        // Fix incorrect links
+                        const links = document.querySelectorAll('a');
+                        links.forEach(link => {
+                            if (link.href.includes('supervision.htmlaa')) {
+                                link.href = link.href.replace('supervision.htmlaa', 'supervision.html');
+                            }
+                            if (link.href.includes('valuation.htmlaa')) {
+                                link.href = link.href.replace('valuation.htmlaa', 'valuation.html');
+                            }
+                            if (link.href.includes('training.htmlaa')) {
+                                link.href = link.href.replace('training.htmlaa', 'training.html');
+                            }
+                        });
+                        
+                        // Hide blog submenu in mobile menu
+                        const blogSubmenu = document.querySelector('.slicknav_menu .submenu');
+                        if (blogSubmenu) {
+                            blogSubmenu.style.display = 'none';
+                        }
+                        
+                        // Hide blog menu item in mobile view
+                        const blogMenuItem = Array.from(document.querySelectorAll('.slicknav_nav > li')).find(
+                            li => li.textContent.includes('Blog')
+                        );
+                        if (blogMenuItem) {
+                            blogMenuItem.style.display = 'none';
+                        }
+                        
+                        // Ensure mobile menu has proper height and scrolling
+                        const mobileNav = document.querySelector('.slicknav_nav');
+                        if (mobileNav) {
+                            mobileNav.style.maxHeight = '70vh';
+                            mobileNav.style.overflowY = 'auto';
+                        }
+                    }
+                }
+                
+                // Run on page load
+                handleMobileView();
+                
+                // Run on window resize
+                window.addEventListener('resize', handleMobileView);
+                
+                // Run after SlickNav initializes (with a slight delay)
+                setTimeout(handleMobileView, 500);
+            });
+        </script>
 </body>
 </html>
