@@ -895,18 +895,14 @@
                         const errorMsg = excelError.message || 'Unknown error';
                         console.error('Error downloading Excel:', errorMsg);
                         
-                        // If this is the specific color formatting error, offer alternative
-                        if (errorMsg.includes("'Format' object has no attribute 'set_color'")) {
-                            const viewOption = confirm('There is an issue with Excel file generation. Would you like to view the report data in a different format instead?');
-                            
-                            if (viewOption) {
-                                // Create a popup window with the report data
-                                displayReportData(reportData.report);
-                            } else {
-                                alert('Please contact the administrator and mention the "Format set_color" error.');
-                            }
+                        // If Excel download fails, offer to display data in table format
+                        const viewOption = confirm('Excel download failed. Would you like to view the report data in table format instead?');
+                        
+                        if (viewOption) {
+                            // Display report data in table format
+                            displayReportTable(reportData.report);
                         } else {
-                            alert(`Error downloading report: ${errorMsg}`);
+                            alert('Please try again later or contact the administrator.');
                         }
                     }
                     
@@ -916,12 +912,12 @@
                 }
             }
             
-            // Function to display report data in a popup
-            function displayReportData(report) {
+            // Function to display report data in table format
+            function displayReportTable(report) {
                 // Create a new window
                 const reportWindow = window.open('', '_blank', 'width=800,height=600,scrollbars=yes');
                 
-                // Generate HTML content
+                // Generate HTML content with table format
                 let htmlContent = `
                 <!DOCTYPE html>
                 <html>
@@ -930,10 +926,10 @@
                     <style>
                         body { font-family: Arial, sans-serif; margin: 20px; }
                         h1 { color: #ff5c97; }
-                        .section { margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-                        .field { margin-bottom: 10px; }
-                        .label { font-weight: bold; color: #333; }
-                        .value { margin-left: 10px; }
+                        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+                        th { background-color: #f2f2f2; text-align: left; padding: 8px; border: 1px solid #ddd; }
+                        td { padding: 8px; border: 1px solid #ddd; }
+                        tr:nth-child(even) { background-color: #f9f9f9; }
                         .print-btn { 
                             background: #ff5c97; 
                             color: white; 
@@ -943,11 +939,32 @@
                             cursor: pointer; 
                             margin-bottom: 20px;
                         }
+                        .section-title {
+                            background-color: #ff5c97;
+                            color: white;
+                            padding: 10px;
+                            margin-top: 20px;
+                            margin-bottom: 10px;
+                        }
+                        .copy-btn {
+                            background: #4CAF50;
+                            color: white;
+                            border: none;
+                            padding: 10px 20px;
+                            border-radius: 5px;
+                            cursor: pointer;
+                            margin-left: 10px;
+                        }
                     </style>
                 </head>
                 <body>
-                    <button class="print-btn" onclick="window.print()">Print Report</button>
-                    <h1>Report Details</h1>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h1>Report Details</h1>
+                        <div>
+                            <button class="print-btn" onclick="window.print()">Print Report</button>
+                            <button class="copy-btn" onclick="copyTableToClipboard()">Copy to Clipboard</button>
+                        </div>
+                    </div>
                 `;
                 
                 // Add timestamp if available
@@ -958,98 +975,315 @@
                 
                 // Client Information Section
                 htmlContent += `
-                    <div class="section">
-                        <h2>Client Information</h2>
-                        <div class="field"><span class="label">Client Name:</span> <span class="value">${report.clientName || 'N/A'}</span></div>
-                        <div class="field"><span class="label">Serial Number:</span> <span class="value">${report.serialNumber || 'N/A'}</span></div>
-                        <div class="field"><span class="label">Bank/Branch Name:</span> <span class="value">${report.bankName || 'N/A'}</span></div>
-                        <div class="field"><span class="label">Contact Number:</span> <span class="value">${report.contactNumber || 'N/A'}</span></div>
-                    </div>
+                    <div class="section-title">Client Information</div>
+                    <table>
+                        <tr>
+                            <th>Field</th>
+                            <th>Value</th>
+                        </tr>
+                        <tr>
+                            <td>Client Name</td>
+                            <td>${report.clientName || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                            <td>Serial Number</td>
+                            <td>${report.serialNumber || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                            <td>Bank/Branch Name</td>
+                            <td>${report.bankName || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                            <td>Contact Number</td>
+                            <td>${report.contactNumber || 'N/A'}</td>
+                        </tr>
+                    </table>
                 `;
                 
                 // Plot Details Section
                 htmlContent += `
-                    <div class="section">
-                        <h2>Plot Details</h2>
-                        <div class="field"><span class="label">Plot No:</span> <span class="value">${report.plotNo || 'N/A'}</span></div>
-                        <div class="field"><span class="label">Plot Area:</span> <span class="value">${report.plotArea || 'N/A'}</span></div>
-                        <div class="field"><span class="label">Location:</span> <span class="value">${report.toleName || 'N/A'}</span></div>
-                        <div class="field"><span class="label">Boundaries Analysis:</span> <span class="value">${report.boundariesAnalysis || 'N/A'}</span></div>
-                        <div class="field"><span class="label">Field Dimensions:</span> <span class="value">${report.fieldDimensions || 'N/A'}</span></div>
-                        <div class="field"><span class="label">Cadastral Dimensions:</span> <span class="value">${report.cadastralDimensions || 'N/A'}</span></div>
-                        <div class="field"><span class="label">Road Width (Cadastral):</span> <span class="value">${report.roadWidthCadastral || 'N/A'}</span></div>
-                        <div class="field"><span class="label">Road Width (Right of Way):</span> <span class="value">${report.roadWidthRightOfWay || 'N/A'}</span></div>
-                        <div class="field"><span class="label">Road Type:</span> <span class="value">${report.roadType || 'N/A'}</span></div>
-                        <div class="field"><span class="label">Other Factors:</span> <span class="value">${report.otherFactors || 'N/A'}</span></div>
-                    </div>
+                    <div class="section-title">Plot Details</div>
+                    <table>
+                        <tr>
+                            <th>Field</th>
+                            <th>Value</th>
+                        </tr>
+                        <tr>
+                            <td>Plot No</td>
+                            <td>${report.plotNo || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                            <td>Plot Area</td>
+                            <td>${report.plotArea || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                            <td>Location (Tole Name)</td>
+                            <td>${report.toleName || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                            <td>Boundaries Analysis</td>
+                            <td>${report.boundariesAnalysis || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                            <td>Field Dimensions</td>
+                            <td>${report.fieldDimensions || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                            <td>Cadastral Dimensions</td>
+                            <td>${report.cadastralDimensions || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                            <td>Road Width (Cadastral)</td>
+                            <td>${report.roadWidthCadastral || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                            <td>Road Width (Right of Way)</td>
+                            <td>${report.roadWidthRightOfWay || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                            <td>Road Type</td>
+                            <td>${report.roadType || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                            <td>Other Factors</td>
+                            <td>${report.otherFactors || 'N/A'}</td>
+                        </tr>
+                    </table>
                 `;
                 
                 // Land Status Section
                 htmlContent += `
-                    <div class="section">
-                        <h2>Land Status and Use</h2>
-                        <div class="field"><span class="label">Land Status:</span> <span class="value">${report.landStatus || 'N/A'}</span></div>
-                        <div class="field"><span class="label">Land Use:</span> <span class="value">${report.landUse || 'N/A'}</span></div>
-                        <div class="field"><span class="label">Land Grading:</span> <span class="value">${report.landGrading || 'N/A'}</span></div>
-                        <div class="field"><span class="label">Surrounding Property:</span> <span class="value">${report.surroundingProperty || 'N/A'}</span></div>
-                        <div class="field"><span class="label">Filling Requirement:</span> <span class="value">${report.fillingRequirement || 'N/A'}</span></div>
-                        <div class="field"><span class="label">Area Importance:</span> <span class="value">${report.areaImportance || 'N/A'}</span></div>
-                    </div>
+                    <div class="section-title">Land Status and Use</div>
+                    <table>
+                        <tr>
+                            <th>Field</th>
+                            <th>Value</th>
+                        </tr>
+                        <tr>
+                            <td>Land Status</td>
+                            <td>${report.landStatus || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                            <td>Land Use</td>
+                            <td>${report.landUse || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                            <td>Land Grading</td>
+                            <td>${report.landGrading || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                            <td>Surrounding Property</td>
+                            <td>${report.surroundingProperty || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                            <td>Filling Requirement</td>
+                            <td>${report.fillingRequirement || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                            <td>Area Importance</td>
+                            <td>${report.areaImportance || 'N/A'}</td>
+                        </tr>
+                    </table>
                 `;
                 
                 // Document Verification Section
                 htmlContent += `
-                    <div class="section">
-                        <h2>Document Verification</h2>
-                        <div class="field"><span class="label">Documents Provided:</span> <span class="value">${report.documentsProvided || 'N/A'}</span></div>
-                        <div class="field"><span class="label">Shape Match:</span> <span class="value">${report.shapeMatch || 'N/A'}</span></div>
-                    </div>
+                    <div class="section-title">Document Verification</div>
+                    <table>
+                        <tr>
+                            <th>Field</th>
+                            <th>Value</th>
+                        </tr>
+                        <tr>
+                            <td>Documents Provided</td>
+                            <td>${report.documentsProvided || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                            <td>Shape Match</td>
+                            <td>${report.shapeMatch || 'N/A'}</td>
+                        </tr>
+                    </table>
                 `;
                 
                 // Distances & Location Section
                 htmlContent += `
-                    <div class="section">
-                        <h2>Distances & Location Factors</h2>
-                        <div class="field"><span class="label">Landmarks:</span> <span class="value">${report.landmarks || 'N/A'}</span></div>
-                        <div class="field"><span class="label">Tension Line Proximity:</span> <span class="value">${report.tensionLineProximity || 'N/A'}</span></div>
-                        <div class="field"><span class="label">Water Body Proximity:</span> <span class="value">${report.waterBodyProximity || 'N/A'}</span></div>
-                        <div class="field"><span class="label">Border Distance:</span> <span class="value">${report.borderDistance || 'N/A'}</span></div>
-                        <div class="field"><span class="label">Government Notifications:</span> <span class="value">${report.govtNotifications || 'N/A'}</span></div>
-                    </div>
+                    <div class="section-title">Distances & Location Factors</div>
+                    <table>
+                        <tr>
+                            <th>Field</th>
+                            <th>Value</th>
+                        </tr>
+                        <tr>
+                            <td>Landmarks</td>
+                            <td>${report.landmarks || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                            <td>Tension Line Proximity</td>
+                            <td>${report.tensionLineProximity || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                            <td>Water Body Proximity</td>
+                            <td>${report.waterBodyProximity || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                            <td>Border Distance</td>
+                            <td>${report.borderDistance || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                            <td>Government Notifications</td>
+                            <td>${report.govtNotifications || 'N/A'}</td>
+                        </tr>
+                    </table>
                 `;
                 
                 // Building Section
                 htmlContent += `
-                    <div class="section">
-                        <h2>Building & Construction Details</h2>
-                        <div class="field"><span class="label">Construction Approval:</span> <span class="value">${report.constructionApproval || 'N/A'}</span></div>
-                        <div class="field"><span class="label">Structure Type:</span> <span class="value">${report.structureType || 'N/A'}</span></div>
-                        <div class="field"><span class="label">Completion Year:</span> <span class="value">${report.completionYear || 'N/A'}</span></div>
-                        <div class="field"><span class="label">Completed Floors:</span> <span class="value">${report.completedFloors || 'N/A'}</span></div>
-                        <div class="field"><span class="label">Maintenance Requirements:</span> <span class="value">${report.maintenanceReq || 'N/A'}</span></div>
-                    </div>
+                    <div class="section-title">Building & Construction Details</div>
+                    <table>
+                        <tr>
+                            <th>Field</th>
+                            <th>Value</th>
+                        </tr>
+                        <tr>
+                            <td>Construction Approval</td>
+                            <td>${report.constructionApproval || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                            <td>Structure Type</td>
+                            <td>${report.structureType || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                            <td>Completion Year</td>
+                            <td>${report.completionYear || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                            <td>Completed Floors</td>
+                            <td>${report.completedFloors || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                            <td>Maintenance Requirements</td>
+                            <td>${report.maintenanceReq || 'N/A'}</td>
+                        </tr>
+                    </table>
                 `;
                 
                 // Market Rate Section
                 htmlContent += `
-                    <div class="section">
-                        <h2>Market Rate</h2>
-                        <div class="field"><span class="label">Market Rate (Person-1):</span> <span class="value">${report.marketRate1 || 'N/A'}</span></div>
-                        <div class="field"><span class="label">Market Rate (Person-2):</span> <span class="value">${report.marketRate2 || 'N/A'}</span></div>
-                        <div class="field"><span class="label">Market Rate (Person-3):</span> <span class="value">${report.marketRate3 || 'N/A'}</span></div>
-                        <div class="field"><span class="label">Market Rate (Person-4):</span> <span class="value">${report.marketRate4 || 'N/A'}</span></div>
-                        <div class="field"><span class="label">Market Rate (Person-5):</span> <span class="value">${report.marketRate5 || 'N/A'}</span></div>
-                    </div>
+                    <div class="section-title">Market Rate</div>
+                    <table>
+                        <tr>
+                            <th>Field</th>
+                            <th>Value</th>
+                        </tr>
+                        <tr>
+                            <td>Market Rate (Person-1)</td>
+                            <td>${report.marketRate1 || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                            <td>Market Rate (Person-2)</td>
+                            <td>${report.marketRate2 || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                            <td>Market Rate (Person-3)</td>
+                            <td>${report.marketRate3 || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                            <td>Market Rate (Person-4)</td>
+                            <td>${report.marketRate4 || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                            <td>Market Rate (Person-5)</td>
+                            <td>${report.marketRate5 || 'N/A'}</td>
+                        </tr>
+                    </table>
                 `;
                 
                 // Valuation Summary Section
                 htmlContent += `
-                    <div class="section">
-                        <h2>Valuation Summary</h2>
-                        <div class="field"><span class="label">Valuer's Opinion:</span> <span class="value">${report.valuersOpinion || 'N/A'}</span></div>
-                        <div class="field"><span class="label">Value Basis:</span> <span class="value">${report.valueBasis || 'N/A'}</span></div>
-                        <div class="field"><span class="label">Valuator Name:</span> <span class="value">${report.valuatorName || 'N/A'}</span></div>
-                    </div>
+                    <div class="section-title">Valuation Summary</div>
+                    <table>
+                        <tr>
+                            <th>Field</th>
+                            <th>Value</th>
+                        </tr>
+                        <tr>
+                            <td>Valuer's Opinion</td>
+                            <td>${report.valuersOpinion || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                            <td>Value Basis</td>
+                            <td>${report.valueBasis || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                            <td>Valuator Name</td>
+                            <td>${report.valuatorName || 'N/A'}</td>
+                        </tr>
+                    </table>
+                `;
+                
+                // Add script for copying table to clipboard
+                htmlContent += `
+                    <script>
+                        function copyTableToClipboard() {
+                            // Create a temporary textarea element
+                            const textarea = document.createElement('textarea');
+                            
+                            // Get all tables
+                            const tables = document.querySelectorAll('table');
+                            let text = '';
+                            
+                            // For each table
+                            tables.forEach((table, tableIndex) => {
+                                // Get the section title
+                                const sectionTitle = document.querySelectorAll('.section-title')[tableIndex].textContent;
+                                text += sectionTitle + '\\n\\n';
+                                
+                                // Get all rows
+                                const rows = table.querySelectorAll('tr');
+                                
+                                // For each row
+                                rows.forEach(row => {
+                                    // Get all cells
+                                    const cells = row.querySelectorAll('th, td');
+                                    
+                                    // For each cell
+                                    cells.forEach((cell, index) => {
+                                        // Add cell text
+                                        text += cell.textContent;
+                                        
+                                        // Add tab between cells
+                                        if (index < cells.length - 1) {
+                                            text += '\\t';
+                                        }
+                                    });
+                                    
+                                    // Add new line after each row
+                                    text += '\\n';
+                                });
+                                
+                                // Add extra new line between tables
+                                text += '\\n';
+                            });
+                            
+                            // Set textarea value
+                            textarea.value = text;
+                            
+                            // Append textarea to body
+                            document.body.appendChild(textarea);
+                            
+                            // Select textarea content
+                            textarea.select();
+                            
+                            // Copy selected content
+                            document.execCommand('copy');
+                            
+                            // Remove textarea
+                            document.body.removeChild(textarea);
+                            
+                            // Alert user
+                            alert('Report data copied to clipboard. You can now paste it into Excel.');
+                        }
+                    </script>
                 `;
                 
                 // Close HTML

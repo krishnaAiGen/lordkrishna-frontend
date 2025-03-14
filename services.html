@@ -22,6 +22,29 @@
             <link rel="stylesheet" href="assets/css/nice-select.css">
             <link rel="stylesheet" href="assets/css/style.css">
             <link rel="stylesheet" href="assets/css/responsive.css">
+            
+            <style>
+                /* Mobile login button styles */
+                .mobile-login-btn {
+                    text-align: center;
+                    margin-top: 15px;
+                    margin-bottom: 15px;
+                }
+                
+                .mobile-login-btn .btn {
+                    background: #ff5c97;
+                    color: white;
+                    padding: 10px 25px;
+                    border-radius: 5px;
+                    display: inline-block;
+                }
+                
+                @media (max-width: 767px) {
+                    .slicknav_nav {
+                        margin-bottom: 60px;
+                    }
+                }
+            </style>
    </head>
 
    <body>
@@ -114,6 +137,10 @@
                             <!-- Mobile Menu -->
                             <div class="col-12">
                                 <div class="mobile_menu d-block d-lg-none"></div>
+                                <!-- Add login button for mobile view -->
+                                <div class="mobile-login-btn d-block d-lg-none">
+                                    <a href="login.html" class="btn">Login</a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -217,7 +244,7 @@
                                         <img src="assets/img/service/supervision.jpg" alt="">
                                     </div>
                                     <div class="service-cap">
-                                        <h4><a href="supervision.htmlaa">Monitoring and Supervision</a></h4>
+                                        <h4><a href="supervision.html">Monitoring and Supervision</a></h4>
                                         <a href="supervision.html" class="more-btn">Read More <i class="ti-plus"></i></a>
                                     </div>
                                     <div class="service-icon">
@@ -298,8 +325,8 @@
                                         
                                     </div>
                                 </div>
-                            </div>
-                        </div> -->
+                            </div> -->
+                        </div>
                         <!-- Copy-Right -->
                         <div class="row align-items-center">
                             <div class="col-xl-12 ">
@@ -361,6 +388,33 @@
         <!-- Jquery Plugins, main Jquery -->    
         <script src="./assets/js/plugins.js"></script>
         <script src="./assets/js/main.js"></script>
+        
+        <!-- Custom script to fix mobile issues -->
+        <script>
+            $(document).ready(function() {
+                // Fix for blog elements and service details in mobile view
+                if ($(window).width() < 768) {
+                    // Ensure all links are correct in mobile view
+                    $('a[href="supervision.htmlaa"]').attr('href', 'supervision.html');
+                    
+                    // Ensure mobile menu displays correctly
+                    $('.slicknav_nav').css('overflow-y', 'auto');
+                    $('.slicknav_nav').css('max-height', '400px');
+                    
+                    // Fix for login button visibility
+                    $('.mobile-login-btn').show();
+                }
+                
+                // Handle window resize
+                $(window).resize(function() {
+                    if ($(window).width() < 768) {
+                        $('.mobile-login-btn').show();
+                    } else {
+                        $('.mobile-login-btn').hide();
+                    }
+                });
+            });
+        </script>
         
     </body>
 </html>

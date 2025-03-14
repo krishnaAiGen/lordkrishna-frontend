@@ -204,11 +204,15 @@
 	padding: 19px;
 	width: 100%;
 	border-bottom: 1px solid #eee;
+	max-height: 400px;
+	overflow-y: auto;
 }
 .slicknav_nav a:hover {
-    background: #F79960 none repeat scroll 0 0;
-    border-radius: 0;
-    color: #ffffff;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
+    background: #ccc;
+    color: #222;
 }
 
 .slicknav_nav a {
@@ -216,6 +220,8 @@
     font-weight: 400;
     color: #000;
     text-transform: capitalize;
+    padding: 10px 15px;
+    display: block;
 }
 
 .slicknav_nav .slicknav_arrow {
