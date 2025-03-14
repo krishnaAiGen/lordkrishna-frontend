@@ -856,25 +856,43 @@
                 }
 
                 try {
-                    const response = await fetch(`${window.API_CONFIG.BASE_URL}/api/download-report/${id}?username=${encodeURIComponent(username)}`, {
-                        headers: {
-                            'Content-Type': 'application/json'
+                    // Create a direct link to download the file
+                    const downloadUrl = `${window.API_CONFIG.BASE_URL}/api/download-report/${id}?username=${encodeURIComponent(username)}`;
+                    
+                    // First try using the fetch API
+                    try {
+                        const response = await fetch(downloadUrl);
+                        
+                        if (!response.ok) {
+                            throw new Error('Failed to download report');
                         }
-                    });
-
-                    if (!response.ok) {
-                        throw new Error('Failed to download report');
+                        
+                        // Check if we got an Excel file
+                        const contentType = response.headers.get('content-type');
+                        if (contentType && (
+                            contentType.includes('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') ||
+                            contentType.includes('application/vnd.ms-excel') ||
+                            contentType.includes('application/octet-stream')
+                        )) {
+                            // Handle as binary file
+                            const blob = await response.blob();
+                            const url = window.URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = `report_${id}.xlsx`;
+                            document.body.appendChild(a);
+                            a.click();
+                            window.URL.revokeObjectURL(url);
+                            document.body.removeChild(a);
+                            return;
+                        }
+                    } catch (fetchError) {
+                        console.warn('Fetch download failed, trying alternative method:', fetchError);
                     }
-
-                    const blob = await response.blob();
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `report_${id}.xlsx`;
-                    document.body.appendChild(a);
-                    a.click();
-                    window.URL.revokeObjectURL(url);
-                    document.body.removeChild(a);
+                    
+                    // Fallback to direct window.open if fetch fails
+                    window.open(downloadUrl, '_blank');
+                    
                 } catch (error) {
                     console.error('Error:', error);
                     alert('An error occurred while downloading the report.');

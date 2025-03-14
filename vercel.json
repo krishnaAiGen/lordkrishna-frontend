@@ -4,5 +4,20 @@
       "source": "/api/:path*",
       "destination": "http://147.189.202.22:5001/api/:path*"
     }
+  ],
+  "headers": [
+    {
+      "source": "/api/download-report/:path*",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        }
+      ]
+    }
   ]
 } 
